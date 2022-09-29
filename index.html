@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>marked.js preview</title>
+  </head>
+  <body>
+    <div id="preview"></div>
+  </body>
+  <script src="./lib/marked.js"></script>
+  <script>
+    document.addEventListener(
+      "readystatechange",
+      function (event) {
+        if (document.readyState === "complete") {
+          console.log("document ready");
+          preview.addEventListener(
+            "click",
+            function (event) {
+              if (event && event.target && event.target.nodeName === "IMG")
+                console.log(event.target.alt, event.target.currentSrc);
+            },
+            false
+          );
+        }
+      },
+      false
+    );
+
+    /**
+     * 实体字符转string
+     * @param {string} entity
+     * @returns {string} string
+     */
+    function entityToString(entity) {
+      let div = document.createElement("div");
+      div.innerHTML = entity;
+      const res = div.innerText || div.textContent;
+      div = null;
+      return res;
+    }
+
+    /**
+     * 提取图片src
+     * @param {string} text
+     * @returns {{
+     *    ids: number;
+     *    title: string;
+     *    src: string;
+     * }[]} 链接list
+     */
+    function extractSrcList(text) {
+      if (!text) return;
+      let imageList = text.match(
+        /role\=(\'|\")dialog(\'|\") src\=(\'|\")(.+?)alt\=(\'|\")(.+?)(\'|\")/g
+      );
+      const imageArr = [];
+      if (imageList) {
+        for (let i = 0, len = imageList.length; i < len; i++) {
+          let params = new URLSearchParams(
+            entityToString(
+              imageList[i].replace(/(\'|\")/g, "").replace(/ {1}/g, "&")
+            )
+          );
+          // for (const key of params.keys()) {
+          //   obj[key] = pair[key];
+          // }
+          imageArr.push({
+            ids: i,
+            title: params.get("alt"),
+            src: params.get("src"),
+          });
+          params = null;
+        }
+      }
+      imageList = null;
+      return imageArr;
+    }
+
+    /**
+     * 获取滚动条距离顶端的距离
+     * @return {Number} scrollTop
+     */
+    function getScrollTop() {
+      return window.pageXOffset !== undefined
+        ? window.pageYOffset
+        : (document.compatMode || "") === "CSS1Compat"
+        ? document.documentElement.scrollTop
+        : document.body.scrollTop;
+    }
+    /**
+     * 判断 window 及元素节点对象下是否存在 scrollTo 属性，
+     * 不存在则自定义，这样就可以解决 IE 下不兼容 scrollTo 的问题
+     */
+    if (!window.scrollTo) {
+      window.scrollTo = function (option) {
+        window.scrollLeft = option.left;
+        window.scrollTop = option.top;
+      };
+    }
+
+    if (!document.body.scrollTo) {
+      Element.prototype.scrollTo = function (option) {
+        this.scrollLeft = option.left;
+        this.scrollTop = option.top;
+      };
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    const options = {
+      // headerPrefix: "&",
+      langLineNumber: true
+      // emojiSource: 'https://static.jianshu.io/assets/emojis/'
+    };
+    console.time("marked");
+    let htmlText = marked(
+      `[TOC]
+## collapsible
+
+\`\`\`diff-javascript diff-highlight
+@@ -4,6 +4,5 @@
+-    let foo = bar.baz([1, 2, 3]);
+-    foo = foo + 1;
++    const foo = bar.baz([1, 2, 3]) + 1;
+     console.log(\`foo: \${foo}\`);
+\`\`\`
+
+<details>
+<summary>点击展开折叠内容</summary>
+
+**标签与正文间一定要空一行！！！**
+</details>
+
+## block && inline
+
+### 这是H3 \`hi\` \`(⌒▽⌒)\` ==mark==:flushed:==哈哈== :shit::google:=guy=n ***这是斜体加粗的文字*** ++这是加下滑线的文字++~~这是加删除线的文字~~~csa~^62^
+==mark== sen==mark== tence ==mark== ~2~12=guy==guy==
+==mark== ^62^^v多少^:upside_down_face:
+
+## Emoji
+
+:upside_down_face::shit:
+
+## image
+
+!["avatar"](https://gw.alipayobjects.com/zos/bmw-prod/7c8e13af-d5d0-4cb7-a834-bffb251fe862/kglp177w_w720_h1440.png)
+!['avatar'](https://gw.alipayobjects.com/zos/bmw-prod/7c8e13af-d5d0-4cb7-a834-bffb251fe862/kglp177w_w720_h1440.png)
+
+## precode
+
+\`\`\`tree
+D:\\NODEJS
+└─node_modules
+    └─npm
+        ├─.github
+        ├─bin
+        │  └─node-gyp-bin
+        ├─changelogs
+        ├─doc
+        │  ├─cli
+        │  ├─files
+        │  ├─misc
+        │  └─spec
+\`\`\`
+
+\`\`\`html
+<h1>csacsa</h1>
+<img role="dialog" src="ss" alt="ss" />
+\`\`\`
+
+## checkout
+
+- [ ] sa
+- [x] ss
+- [ ] sa
+- [x] ss
+- [ ] sa
+- [x] ss
+- [ ] sa
+- [x] ss
+
+Here's a sentence with a footnote. [^1]
+
+[^1]: This is the footnote.
+
+## list
+
+* Using welcoming and inclusive language
+* Being respectful of differing viewpoints and experiences
+
+## blockquote
+
+> Examples of unacceptable behavior by participants include:
+`,
+      options
+    );
+    document.getElementById("preview").innerHTML = htmlText;
+
+    let srcArr = extractSrcList(htmlText);
+    console.log(srcArr);
+    console.timeEnd("marked");
+  </script>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>marked.js preview</title>
+    <style>
+      #expand-text,.content-more {
+        display: none;
+      }
+
+      #expand-text:checked ~ #content-text {
+        max-height: 600px;
+        overflow: hidden;
+      }
+      #expand-text:checked ~ .content-more {
+        display: block;
+        position: relative;
+        padding-top: 20px;
+        padding-bottom: 30px;
+        text-align: center;
+      }
+      #expand-text:checked ~ .content-more .gradient-mask {
+        background-image: -webkit-linear-gradient(
+          top,
+          rgba(255, 255, 255, 0),
+          #fff
+        );
+        background-image: linear-gradient(
+          -180deg,
+          rgba(255, 255, 255, 0),
+          #fff
+        );
+        height: 80px;
+        position: absolute;
+        left: 0;
+        top: -79px;
+        width: 100%;
+      }
+      #expand-text:checked ~ .content-more .readmore {
+        display: inline-block;
+        background: #0067cb;
+        color: #fff;
+        width: 175px;
+        height: 42px;
+        border-radius: 42px;
+        line-height: 42px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="checkbox" id="expand-text" checked="checked" />
+    <div id="content-text">超长文本</div>
+    <div class="content-more">
+      <div class="gradient-mask"></div>
+      <label for="expand-text" class="readmore">点击展开全文</label>
+    </div>
+  </body>
+</html>
