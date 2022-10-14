@@ -1,125 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>marked.js preview</title>
-  </head>
-  <body>
-    <div id="preview"></div>
-  </body>
-  <script src="./lib/marked.js"></script>
-  <script>
-    document.addEventListener(
-      "readystatechange",
-      function (event) {
-        if (document.readyState === "complete") {
-          console.log("document ready");
-          preview.addEventListener(
-            "click",
-            function (event) {
-              if (event && event.target && event.target.nodeName === "IMG")
-                console.log(event.target.alt, event.target.currentSrc);
-            },
-            false
-          );
-        }
-      },
-      false
-    );
 
-    /**
-     * 实体字符转string
-     * @param {string} entity
-     * @returns {string} string
-     */
-    function entityToString(entity) {
-      let div = document.createElement("div");
-      div.innerHTML = entity;
-      const res = div.innerText || div.textContent;
-      div = null;
-      return res;
-    }
+<head>
+  <meta charset="utf-8" />
+  <title>marked.js preview</title>
+</head>
 
-    /**
-     * 提取图片src
-     * @param {string} text
-     * @returns {{
-     *    ids: number;
-     *    title: string;
-     *    src: string;
-     * }[]} 链接list
-     */
-    function extractSrcList(text) {
-      if (!text) return;
-      let imageList = text.match(
-        /role\=(\'|\")dialog(\'|\") src\=(\'|\")(.+?)alt\=(\'|\")(.+?)(\'|\")/g
-      );
-      const imageArr = [];
-      if (imageList) {
-        for (let i = 0, len = imageList.length; i < len; i++) {
-          let params = new URLSearchParams(
-            entityToString(
-              imageList[i].replace(/(\'|\")/g, "").replace(/ {1}/g, "&")
-            )
-          );
-          // for (const key of params.keys()) {
-          //   obj[key] = pair[key];
-          // }
-          imageArr.push({
-            ids: i,
-            title: params.get("alt"),
-            src: params.get("src"),
-          });
-          params = null;
-        }
+<body>
+  <div id="preview"></div>
+</body>
+<script src="./marked.min.js"></script>
+<!-- 引入KaTex文件 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css"
+  integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js"
+  integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+
+<script>
+  document.addEventListener(
+    "readystatechange",
+    function (event) {
+      if (document.readyState === "complete") {
+        console.log("document ready");
+        preview.addEventListener(
+          "click",
+          function (event) {
+            if (event && event.target && event.target.nodeName === "IMG")
+              console.log(event.target.alt, event.target.currentSrc);
+          },
+          false
+        );
       }
-      imageList = null;
-      return imageArr;
-    }
+    },
+    false
+  );
 
-    /**
-     * 获取滚动条距离顶端的距离
-     * @return {Number} scrollTop
-     */
-    function getScrollTop() {
-      return window.pageXOffset !== undefined
-        ? window.pageYOffset
-        : (document.compatMode || "") === "CSS1Compat"
+  /**
+   * 实体字符转string
+   * @param {string} entity
+   * @returns {string} string
+   */
+  function entityToString(entity) {
+    let div = document.createElement("div");
+    div.innerHTML = entity;
+    const res = div.innerText || div.textContent;
+    div = null;
+    return res;
+  }
+
+  /**
+   * 提取图片src
+   * @param {string} text
+   * @returns {{
+   *    ids: number;
+   *    title: string;
+   *    src: string;
+   * }[]} 链接list
+   */
+  function extractSrcList(text) {
+    if (!text) return;
+    let imageList = text.match(
+      /role\=(\'|\")dialog(\'|\") src\=(\'|\")(.+?)alt\=(\'|\")(.+?)(\'|\")/g
+    );
+    const imageArr = [];
+    if (imageList) {
+      for (let i = 0, len = imageList.length; i < len; i++) {
+        let params = new URLSearchParams(
+          entityToString(
+            imageList[i].replace(/(\'|\")/g, "").replace(/ {1}/g, "&")
+          )
+        );
+        // for (const key of params.keys()) {
+        //   obj[key] = pair[key];
+        // }
+        imageArr.push({
+          ids: i,
+          title: params.get("alt"),
+          src: params.get("src"),
+        });
+        params = null;
+      }
+    }
+    imageList = null;
+    return imageArr;
+  }
+
+  /**
+   * 获取滚动条距离顶端的距离
+   * @return {Number} scrollTop
+   */
+  function getScrollTop() {
+    return window.pageXOffset !== undefined
+      ? window.pageYOffset
+      : (document.compatMode || "") === "CSS1Compat"
         ? document.documentElement.scrollTop
         : document.body.scrollTop;
-    }
-    /**
-     * 判断 window 及元素节点对象下是否存在 scrollTo 属性，
-     * 不存在则自定义，这样就可以解决 IE 下不兼容 scrollTo 的问题
-     */
-    if (!window.scrollTo) {
-      window.scrollTo = function (option) {
-        window.scrollLeft = option.left;
-        window.scrollTop = option.top;
-      };
-    }
-
-    if (!document.body.scrollTo) {
-      Element.prototype.scrollTo = function (option) {
-        this.scrollLeft = option.left;
-        this.scrollTop = option.top;
-      };
-    }
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-
-    const options = {
-      // headerPrefix: "&",
-      langLineNumber: true
-      // emojiSource: 'https://static.jianshu.io/assets/emojis/'
+  }
+  /**
+   * 判断 window 及元素节点对象下是否存在 scrollTo 属性，
+   * 不存在则自定义，这样就可以解决 IE 下不兼容 scrollTo 的问题
+   */
+  if (!window.scrollTo) {
+    window.scrollTo = function (option) {
+      window.scrollLeft = option.left;
+      window.scrollTop = option.top;
     };
-    console.time("marked");
-    let htmlText = marked(
-      `[TOC]
+  }
+
+  if (!document.body.scrollTo) {
+    Element.prototype.scrollTo = function (option) {
+      this.scrollLeft = option.left;
+      this.scrollTop = option.top;
+    };
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+
+  const options = {
+    // headerPrefix: "&",
+    langLineNumber: true
+    // emojiSource: 'https://static.jianshu.io/assets/emojis/'
+  };
+  console.time("marked");
+  let htmlText = marked(
+    `[TOC]
 ## collapsible
+
+内联公式$\\left(\\LARGE{AB}\\right)$
+内联公式$\\xcancel{ABC}$
+\$\$
+\\begin{array}{c}   S= \\binom{N}{n},A_{k}=\\binom{M}{k}\\cdot \\binom{N-M}{n-k} \\\\   P\\left ( A_{k}\\right ) = \\frac{\\binom{M}{k}\\cdot \\binom{N-M}{n-k}}{\\binom{N}{n}} \\end{array}\\begin{array}{c}   a,b \\in R^{+} \\\\    \\Rightarrow \\frac{a+b}{{2}}\\ge \\sqrt{ab} \\\\    \\left( \\text{当且仅当}a=b\\text{时取“}=\\text{”号}\\right) \\end{array}
+\$\$
+
+\$\$
+\\begin{equation}
+  x = a_0 + \\cfrac{1}{a_1 
+          + \\cfrac{1}{a_2 
+          + \\cfrac{1}{a_3 + \\cfrac{1}{a_4} } } }
+\\end{equation}
+\$\$
 
 \`\`\`diff-javascript diff-highlight
 @@ -4,6 +4,5 @@
@@ -196,12 +218,44 @@ Here's a sentence with a footnote. [^1]
 
 > Examples of unacceptable behavior by participants include:
 `,
-      options
-    );
-    document.getElementById("preview").innerHTML = htmlText;
+    options
+  );
+  document.getElementById("preview").innerHTML = htmlText;
 
-    let srcArr = extractSrcList(htmlText);
-    console.log(srcArr);
-    console.timeEnd("marked");
-  </script>
+  let srcArr = extractSrcList(htmlText);
+  console.log(srcArr);
+  console.timeEnd("marked");
+
+  const delimiters = [
+    { left: '$$', right: '$$', display: true },
+    { left: '$', right: '$', display: false },
+    { left: '\\(', right: '\\)', display: false },
+    { left: '\\[', right: '\\]', display: true }
+  ];
+  window.addEventListener('load', () => {
+    document.documentElement.querySelectorAll('.m-katex-block').forEach(function (ele) {
+      console.log(ele.textContent.replace(/\$/g, ""));
+      katex.render(
+        ele.textContent,
+        ele, {
+        throwOnError: false,
+        displayMode: true,
+        delimiters,
+      });
+    })
+    document.documentElement.querySelectorAll('.m-katex-inline').forEach(function (ele) {
+      console.log(ele.textContent);
+      katex.render(
+        ele.textContent,
+        ele,
+        {
+          throwOnError: false,
+          displayMode: false,
+          delimiters,
+        }
+      )
+    })
+  })
+</script>
+
 </html>

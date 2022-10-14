@@ -5,7 +5,7 @@
   "bin": {
     "marked": "bin/marked"
   },
-  "browser": "./lib/marked.js",
+  "browser": "marked.min.js",
   "bundleDependencies": false,
   "dependencies": {},
   "deprecated": false,
@@ -46,7 +46,7 @@
     "html"
   ],
   "license": "MIT",
-  "main": "./lib/marked.js",
+  "main": "marked.min.js",
   "man": [
     "./man/marked.1"
   ],
@@ -76,5 +76,5 @@
     "html"
   ],
   "typings": "types/index.d.ts",
-  "version": "1.1.69"
+  "version": "1.2.0"
 }

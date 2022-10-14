@@ -57,6 +57,33 @@ function indentCodeCompensation(raw, text) {
     })
     .join('\n');
 }
+function indentKatexCompensation(raw, text) {
+  const matchIndentToKatex = raw.match(/^(\s+)(?:\$\$)/);
+
+  if (matchIndentToKatex === null) {
+    return text;
+  }
+
+  const indentToKatex = matchIndentToKatex[1];
+
+  return text
+    .split('\n')
+    .map(node => {
+      const matchIndentInNode = node.match(/^\s+/);
+      if (matchIndentInNode === null) {
+        return node;
+      }
+
+      const [indentInNode] = matchIndentInNode;
+
+      if (indentInNode.length >= indentToKatex.length) {
+        return node.slice(indentToKatex.length);
+      }
+
+      return node;
+    })
+    .join('\n');
+}
 
 /**
  * Tokenizer
@@ -76,6 +103,31 @@ module.exports = class Tokenizer {
         };
       }
       return { raw: '\n' };
+    }
+  }
+
+  katexBlock(src, tokens) {
+    const cap = this.rules.block.katex.exec(src);
+    if (cap) {
+      console.log(cap, tokens);
+      const lastToken = tokens[tokens.length - 1];
+      // An indented code block cannot interrupt a paragraph.
+      if (lastToken && lastToken.type === 'paragraph') {
+        return {
+          raw: cap[0],
+          text: cap[0].trimRight()
+        };
+      }
+
+      const text = cap[0].replace(/^ {4}/gm, '');
+      return {
+        type: 'katexBlock',
+        raw: cap[0],
+        codeBlockStyle: 'indented',
+        text: !this.options.pedantic
+          ? rtrim(text, '\n')
+          : text
+      };
     }
   }
 
@@ -113,6 +165,20 @@ module.exports = class Tokenizer {
         type: 'code',
         raw,
         lang: cap[2] ? cap[2].trim() : cap[2],
+        text
+      };
+    }
+  }
+
+  fencesKatex(src) {
+    const cap = this.rules.block.fencesKatex.exec(src);
+    if (cap) {
+      const raw = cap[0];
+      const text = indentKatexCompensation(raw, cap[3] || '');
+
+      return {
+        type: 'katexBlock',
+        raw,
         text
       };
     }
@@ -792,6 +858,19 @@ module.exports = class Tokenizer {
       if (cap[0].length > 1) {
         return {
           type: 'ins',
+          raw: cap[0],
+          text: cap[1]
+        };
+      }
+    }
+  }
+
+  katexInline(src) {
+    const cap = this.rules.inline.katex.exec(src);
+    if (cap) {
+      if (cap[0].length > 1) {
+        return {
+          type: 'katexInline',
           raw: cap[0],
           text: cap[1]
         };

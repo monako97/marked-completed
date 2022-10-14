@@ -94,6 +94,10 @@ module.exports = class Parser {
             token.escaped);
           continue;
         }
+        case 'katexBlock': {
+          out += this.renderer.katexBlock(token.text, token.escaped);
+          continue;
+        }
         case 'table': {
           header = '';
 
@@ -225,6 +229,10 @@ module.exports = class Parser {
     for (i = 0; i < l; i++) {
       token = tokens[i];
       switch (token.type) {
+        case 'katexInline': {
+          out += renderer.katexInline(token.text);
+          break;
+        }
         case 'escape': {
           out += renderer.text(token.text);
           break;

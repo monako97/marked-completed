@@ -159,7 +159,12 @@ module.exports = class Lexer {
         tokens.push(token);
         continue;
       }
-
+      // fencesKatex
+      if (token = this.tokenizer.fencesKatex(src)) {
+        src = src.substring(token.raw.length);
+        tokens.push(token);
+        continue;
+      }
       // heading
       if (token = this.tokenizer.heading(src)) {
         src = src.substring(token.raw.length);
@@ -365,6 +370,18 @@ module.exports = class Lexer {
       }
       keepPrevChar = false;
 
+      // katexBlock
+      if (token = this.tokenizer.katexBlock(src)) {
+        src = src.substring(token.raw.length);
+        tokens.push(token);
+        continue;
+      }
+      // katexInline
+      if (token = this.tokenizer.katexInline(src)) {
+        src = src.substring(token.raw.length);
+        tokens.push(token);
+        continue;
+      }
       // 颜文字
       if (token = this.tokenizer.textEmoji(src)) {
         src = src.substring(token.raw.length);

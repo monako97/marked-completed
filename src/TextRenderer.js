@@ -67,4 +67,8 @@ module.exports = class TextRenderer {
   codeEmoji(text) {
     return text;
   }
+
+  katexInline(text) {
+    return text;
+  }
 };

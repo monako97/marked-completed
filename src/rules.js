@@ -28,9 +28,11 @@ const block = {
   lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
   // regex template, placeholders will be replaced according to different paragraph
   // interruption rules of commonmark and the original markdown spec:
-  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html)[^\n]+)*)/,
+  _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|fencesKatex|list|html|)[^\n]+)*)/,
   text: /^<!\[TOC\]|[^\n]+/,
-  toc: /\s*\[TOC\]/
+  toc: /\s*\[TOC\]/,
+  fencesKatex: /^ {0,2}(\${2,}(?=[^\$\n]*\n)|~{2,})([^\n]*)\n(?:|([\s\S]*?)\n)(?: {0,2}\1[~\$]* *(?:\n+|$)|$)/,
+  katex: /^\$\$(.+?)\$\$/
 };
 
 block._label = /(?!\s*\])(?:\\[\[\]]|[^\[\]])+/;
@@ -80,6 +82,7 @@ block.paragraph = edit(block._paragraph)
   .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
   .replace('blockquote', ' {0,3}>')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .replace('fencesKatex', ' {0,2}(?:`{2,}(?=[^\$\\n]*\\n)|~{2,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
   .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
   .replace('tag', block._tag) // pars can be interrupted by type (6) html blocks
@@ -103,11 +106,11 @@ block.gfm = merge({}, block.normal, {
   nptable:
     '^ *([^|\\n ].*\\|.*)\\n' // Header
     + ' {0,3}([-:]+ *\\|[-| :]*)' // Align
-    + '(?:\\n((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)', // Cells
+    + '(?:\\n((?:(?!\\n|hr|heading|blockquote|code|fences|fencesKatex|list|html).*(?:\\n|$))*)\\n*|$)', // Cells
   table:
     '^ *\\|(.+)\\n' // Header
     + ' {0,3}\\|?( *[-:]+[-| :]*)' // Align
-    + '(?:\\n *((?:(?!\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
+    + '(?:\\n *((?:(?!\\n|hr|heading|blockquote|code|fences|fencesKatex|list|html).*(?:\\n|$))*)\\n*|$)' // Cells
 });
 
 block.gfm.nptable = edit(block.gfm.nptable)
@@ -116,6 +119,7 @@ block.gfm.nptable = edit(block.gfm.nptable)
   .replace('blockquote', ' {0,3}>')
   .replace('code', ' {4}[^\\n]')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .replace('fencesKatex', ' {0,2}(?:`{2,}(?=[^\$\\n]*\\n)|~{2,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
   .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
   .replace('tag', block._tag) // tables can be interrupted by type (6) html blocks
@@ -127,6 +131,7 @@ block.gfm.table = edit(block.gfm.table)
   .replace('blockquote', ' {0,3}>')
   .replace('code', ' {4}[^\\n]')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
+  .replace('fencesKatex', ' {0,2}(?:`{2,}(?=[^\$\\n]*\\n)|~{2,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
   .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|!--)')
   .replace('tag', block._tag) // tables can be interrupted by type (6) html blocks
@@ -154,12 +159,14 @@ block.pedantic = merge({}, block.normal, {
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
   heading: /^(#{1,6})(.*)(?:\n+|$)/,
   fences: noopTest, // fences not supported
+  fencesKatex: noopTest,
   paragraph: edit(block.normal._paragraph)
     .replace('hr', block.hr)
     .replace('heading', ' *#{1,6} *[^\n]')
     .replace('lheading', block.lheading)
     .replace('blockquote', ' {0,3}>')
     .replace('|fences', '')
+    .replace('|fencesKatex', '')
     .replace('|list', '')
     .replace('|html', '')
     .getRegex()
@@ -198,7 +205,7 @@ const inline = {
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
   del: noopTest,
-  text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[\`\^\~\=\+\:\*]|\b_|$)|[^ ](?= {2,}\n)))/,
+  text: /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[\`\^\~\=\+\:\*\$]|\b_|$)|[^ ](?= {2,}\n)))/,
   punctuation: /^([\s*punctuation])/,
   textEmoji: /^`([^a-zA-Z]+?)`/,
   codeEmoji: /^:([A-Za-z0-9_\-\+]+?):/,
@@ -206,7 +213,8 @@ const inline = {
   sup: /^\^(.+?)\^/,
   sub: /^\~(.+?)\~/,
   ins: /^\+\+(.+?)\+\+/,
-  s: /^\~\~(.+?)\~\~/
+  s: /^\~\~(.+?)\~\~/,
+  katex: /^\$(.+?)\$/
 };
 
 // list of punctuation marks from common mark spec
@@ -336,7 +344,7 @@ inline.gfm = merge({}, inline.normal, {
   url: /^((?:ftp|https?):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/,
   _backpedal: /(?:[^?!.,:;*_~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_~)]+(?!$))+/,
   del: /^(~~?)(?=[^\s~])([\s\S]*?[^\s~])\1(?=[^~]|$)/,
-  text: /^([`~]+|[^`~])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[\`\^\~\=\+\:\*]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))/
+  text: /^([`~]+|[^`~])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[\`\^\~\=\+\:\*\$]|\b_|https?:\/\/|ftp:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@))/
 });
 
 inline.gfm.url = edit(inline.gfm.url, 'i')

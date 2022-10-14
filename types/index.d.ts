@@ -139,6 +139,7 @@ declare namespace marked {
         space(src: string): Tokens.Space;
         code(src: string, token: Token): Tokens.Code;
         fences(src: string): Tokens.Code;
+        fencesKatex(src: string): Tokens.KatexBlock;
         heading(src: string): Tokens.Heading;
         nptable(src: string): Tokens.Table;
         hr(src: string): Tokens.Hr;
@@ -317,6 +318,19 @@ declare namespace marked {
             raw: string;
             codeBlockStyle?: 'indented';
             lang?: string;
+            text: string;
+        }
+
+        interface KatexBlock {
+            type: 'katexBlock';
+            raw: string;
+            codeBlockStyle?: 'indented';
+            lang?: string;
+            text: string;
+        }
+        interface KatexInline {
+            type: 'katexInline';
+            raw: string;
             text: string;
         }
 

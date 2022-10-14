@@ -3,3 +3,4 @@
 - [x] mark
 - [x] sup ^63^
 - [x] sub ~2~
+- [x] katex

@@ -60,6 +60,10 @@ class Renderer {
       + '</code></pre>\n';
   }
 
+  katexBlock(code, escaped) {
+    return '<div class="m-katex-block">' + (escaped ? code : escape(code, true)) + '</div>\n';
+  }
+
   blockquote(quote) {
     return '<blockquote>\n' + quote + '</blockquote>\n';
   }
@@ -209,6 +213,10 @@ class Renderer {
 
   ins(text) {
     return '<ins>' + text + '</ins>';
+  }
+
+  katexInline(text) {
+    return '<span class="m-katex-inline">' + text + '</span>';
   }
 
   addToc(anchor, text, level) {
