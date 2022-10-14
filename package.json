@@ -58,7 +58,7 @@
     "build:reset": "git checkout upstream/master lib/marked.js lib/marked.esm.js marked.min.js",
     "lint": "eslint --fix bin/marked .",
     "minify": "uglifyjs lib/marked.js -cm  --comments /Copyright/ -o marked.min.js",
-    "prepublishOnly": "npm run test:lint && npm run build && npm version patch",
+    "prepublishOnly": "npm run test:lint && npm run build",
     "rollup": "npm run rollup:umd && npm run rollup:esm",
     "rollup:esm": "rollup -c rollup.config.esm.js",
     "rollup:umd": "rollup -c rollup.config.js",
@@ -76,5 +76,13 @@
     "html"
   ],
   "typings": "types/index.d.ts",
-  "version": "1.2.1"
+  "version": "1.2.1",
+  "files": [
+    "bin/",
+    "lib/",
+    "src/",
+    "man/",
+    "types/",
+    "marked.min.js"
+  ]
 }
