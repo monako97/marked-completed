@@ -61,7 +61,7 @@ class Renderer {
   }
 
   katexBlock(code, escaped) {
-    return '<div class="m-katex-block">' + (escaped ? code : escape(code, true)) + '</div>\n';
+    return '<div class="n-katex-block">' + (escaped ? code : escape(code, true)) + '</div>\n';
   }
 
   blockquote(quote) {
@@ -190,7 +190,7 @@ class Renderer {
 
   codeEmoji(text) {
     if (this.options.emojiSource) {
-      return '<img class="m-emoji" style="width: 20px;height: 20px;" src="' + this.options.emojiSource + text + '.png" alt="' + text + '"/>';
+      return '<img class="n-emoji" style="width: 20px;height: 20px;" src="' + this.options.emojiSource + text + '.png" alt="' + text + '"/>';
     }
     return this.emoji[text] || ' :' + text + ': ';
   }
@@ -216,7 +216,7 @@ class Renderer {
   }
 
   katexInline(text) {
-    return '<span class="m-katex-inline">' + text + '</span>';
+    return '<span class="n-katex-inline">' + text + '</span>';
   }
 
   addToc(anchor, text, level) {
@@ -225,13 +225,13 @@ class Renderer {
   }
 
   // 使用堆栈的方式处理嵌套的ul,li，level即ul的嵌套层次，1是最外层
-  toHTML() {
+  toTocHTML() {
     const levelStack = [];
     let result = '';
 
     const addStartUL = () => {
       if (!result.trim().length) {
-        result += '<ol class="markdown-toc" role="menubar">';
+        result += '<ol class="n-md-toc" role="menubar">';
       } else {
         result += '<ol>';
       }
@@ -271,6 +271,8 @@ class Renderer {
     // 清理先前数据供下次使用
     this.itoc = [];
     this.itocIndex = 0;
+
+    console.log(result);
     return result;
   }
 }

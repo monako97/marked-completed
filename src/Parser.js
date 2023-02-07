@@ -209,8 +209,9 @@ module.exports = class Parser {
       }
     }
 
+    out = '<div class="n-md-body">' + out + '</div>';
     if (toc) {
-      out = this.renderer.toHTML() + out;
+      out = this.renderer.toTocHTML() + out;
     }
 
     return out;

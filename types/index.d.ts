@@ -205,7 +205,7 @@ declare namespace marked {
         s(text: any): string;
         ins(text: any): string;
         addToc(anchor: string, text: string, level: number): string;
-        toHTML(): string;
+        toTocHTML(): string;
         emoji: Record<string, string> | null;
     }
 
