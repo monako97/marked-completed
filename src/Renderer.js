@@ -272,7 +272,6 @@ class Renderer {
     this.itoc = [];
     this.itocIndex = 0;
 
-    console.log(result);
     return result;
   }
 }
