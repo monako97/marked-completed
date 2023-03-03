@@ -359,7 +359,11 @@ declare namespace marked {
             raw: string;
             text: string;
         }
-
+        interface BlockquoteTip {
+            type: 'blockquoteTip';
+            raw: string;
+            text: string;
+        }
         interface BlockquoteStart {
             type: 'blockquote_start';
             raw: string;

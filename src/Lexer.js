@@ -193,6 +193,12 @@ module.exports = class Lexer {
         tokens.push(token);
         continue;
       }
+      if (token = this.tokenizer.blockquoteTip(src)) {
+        src = src.substring(token.raw.length);
+        token.tokens = this.blockTokens(token.text, [], top);
+        tokens.push(token);
+        continue;
+      }
 
       // list
       if (token = this.tokenizer.list(src)) {
@@ -318,6 +324,10 @@ module.exports = class Lexer {
           break;
         }
         case 'blockquote': {
+          this.inline(token.tokens);
+          break;
+        }
+        case 'blockquoteTip': {
           this.inline(token.tokens);
           break;
         }

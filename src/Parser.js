@@ -136,6 +136,11 @@ module.exports = class Parser {
           out += this.renderer.blockquote(body);
           continue;
         }
+        case 'blockquoteTip': {
+          body = this.parse(token.tokens);
+          out += this.renderer.blockquoteTip(body);
+          continue;
+        }
         case 'list': {
           ordered = token.ordered;
           start = token.start;

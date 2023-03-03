@@ -10,6 +10,7 @@ const block = {
   hr: /^ {0,3}((?:- *){3,}|(?:_ *){3,}|(?:\* *){3,})(?:\n+|$)/,
   heading: /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
+  blockquoteTip: /^( {0,3}\!> ?(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( {0,3})(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?! {0,3}bull )\n*|\s*$)/,
   html:
     '^ {0,3}(?:' // optional indentation
@@ -81,6 +82,7 @@ block.paragraph = edit(block._paragraph)
   .replace('heading', ' {0,3}#{1,6} ')
   .replace('|lheading', '') // setex headings don't interrupt commonmark paragraphs
   .replace('blockquote', ' {0,3}>')
+  .replace('blockquoteTip', ' {0,3}\!>')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
   .replace('fencesKatex', ' {0,2}(?:`{2,}(?=[^\$\\n]*\\n)|~{2,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
@@ -89,6 +91,10 @@ block.paragraph = edit(block._paragraph)
   .getRegex();
 
 block.blockquote = edit(block.blockquote)
+  .replace('paragraph', block.paragraph)
+  .getRegex();
+
+block.blockquoteTip = edit(block.blockquoteTip)
   .replace('paragraph', block.paragraph)
   .getRegex();
 
@@ -117,6 +123,7 @@ block.gfm.nptable = edit(block.gfm.nptable)
   .replace('hr', block.hr)
   .replace('heading', ' {0,3}#{1,6} ')
   .replace('blockquote', ' {0,3}>')
+  .replace('blockquoteTip', ' {0,3}\!>')
   .replace('code', ' {4}[^\\n]')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
   .replace('fencesKatex', ' {0,2}(?:`{2,}(?=[^\$\\n]*\\n)|~{2,})[^\\n]*\\n')
@@ -165,6 +172,7 @@ block.pedantic = merge({}, block.normal, {
     .replace('heading', ' *#{1,6} *[^\n]')
     .replace('lheading', block.lheading)
     .replace('blockquote', ' {0,3}>')
+    .replace('blockquoteTip', ' {0,3}\!>')
     .replace('|fences', '')
     .replace('|fencesKatex', '')
     .replace('|list', '')

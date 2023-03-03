@@ -68,6 +68,10 @@ class Renderer {
     return '<blockquote>\n' + quote + '</blockquote>\n';
   }
 
+  blockquoteTip(quote) {
+    return '<blockquote class="n-tip">\n' + quote + '</blockquote>\n';
+  }
+
   html(html) {
     return html;
   }

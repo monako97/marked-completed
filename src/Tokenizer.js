@@ -109,7 +109,6 @@ module.exports = class Tokenizer {
   katexBlock(src, tokens) {
     const cap = this.rules.block.katex.exec(src);
     if (cap) {
-      console.log(cap, tokens);
       const lastToken = tokens[tokens.length - 1];
       // An indented code block cannot interrupt a paragraph.
       if (lastToken && lastToken.type === 'paragraph') {
@@ -262,6 +261,19 @@ module.exports = class Tokenizer {
 
       return {
         type: 'blockquote',
+        raw: cap[0],
+        text
+      };
+    }
+  }
+
+  blockquoteTip(src) {
+    const cap = this.rules.block.blockquoteTip.exec(src);
+    if (cap) {
+      const text = cap[0].replace(/^ *\!> ?/gm, '');
+
+      return {
+        type: 'blockquoteTip',
         raw: cap[0],
         text
       };
