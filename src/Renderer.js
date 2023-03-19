@@ -196,7 +196,7 @@ class Renderer {
     if (this.options.emojiSource) {
       return '<img class="n-emoji" style="width: 20px;height: 20px;" src="' + this.options.emojiSource + text + '.png" alt="' + text + '"/>';
     }
-    return this.emoji[text] || ' :' + text + ': ';
+    return this.options.emoji[text] || ' :' + text + ': ';
   }
 
   mark(text) {
@@ -280,5 +280,5 @@ class Renderer {
   }
 }
 
-Renderer.prototype.emoji = require('./emoji.js');
+// Renderer.prototype.emoji = require('../emoji.js');
 module.exports = Renderer;

@@ -620,6 +620,10 @@ declare namespace marked {
         /**
          * emoji源地址，默认null
          */
+        emoji?: Record<string, any> | null;
+        /**
+         * 图片emoji源地址，默认null
+         */
         emojiSource?: string | null;
         /**
          * 代码块显示line number

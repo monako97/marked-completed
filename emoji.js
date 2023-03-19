@@ -1,4 +1,4 @@
-module.exports = {
+const emoji = {
   100: '💯',
   1234: '🔢',
   grinning: '😀',
@@ -1838,3 +1838,5 @@ module.exports = {
   scotland: '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
   wales: '🏴󠁧󠁢󠁷󠁬󠁳󠁿'
 };
+
+console.log(emoji);

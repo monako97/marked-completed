@@ -20,7 +20,8 @@ function getDefaults() {
     tokenizer: null,
     walkTokens: null,
     xhtml: false,
-    emojiSource: null
+    emojiSource: null,
+    emoji: {}
   };
 }
 

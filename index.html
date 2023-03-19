@@ -15,7 +15,7 @@
   integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js"
   integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
-
+<script src="./emoji.js"></script>
 <script>
   document.addEventListener(
     "readystatechange",
@@ -121,7 +121,8 @@
 
   const options = {
     // headerPrefix: "&",
-    langLineNumber: true
+    langLineNumber: true,
+    emoji: emoji,
     // emojiSource: 'https://static.jianshu.io/assets/emojis/'
   };
   console.time("marked");
