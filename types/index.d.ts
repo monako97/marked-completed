@@ -207,6 +207,8 @@ declare namespace marked {
         addToc(anchor: string, text: string, level: number): string;
         toTocHTML(): string;
         emoji: Record<string, string> | null;
+        katexBlock(code: string): string;
+        katexInline(code: string): string;
     }
 
     class TextRenderer {
