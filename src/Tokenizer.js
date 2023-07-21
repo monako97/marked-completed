@@ -900,7 +900,8 @@ module.exports = class Tokenizer {
           color: cap[1],
           size: cap[2],
           face: cap[3],
-          text: cap[4]
+          opacity: cap[4],
+          text: cap[5]
         };
       }
     }

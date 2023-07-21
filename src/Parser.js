@@ -240,7 +240,7 @@ module.exports = class Parser {
           break;
         }
         case 'colorFont': {
-          out += renderer.colorFont(token.text, token.color, token.size, token.face);
+          out += renderer.colorFont(token.text, token.color, token.size, token.face, token.opacity);
           break;
         }
         case 'escape': {

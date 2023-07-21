@@ -223,7 +223,7 @@ const inline = {
   ins: /^\+\+(.+?)\+\+/,
   s: /^\~\~(.+?)\~\~/,
   katex: /^\$(.+?)\$/,
-  colorFont: /^\\color{([^|}]+)(?:\|([^|}]+))?(?:\|([^}]+))?}{([^}]+)}/
+  colorFont: /^\\color{([^|}]*)\|?([^|}]*)\|?([^|}]*)\|?([^}]*)}{([^}]*)}/
 };
 
 // list of punctuation marks from common mark spec

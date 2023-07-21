@@ -72,7 +72,7 @@ module.exports = class TextRenderer {
     return text;
   }
 
-  colorFont(text, color, size, face) {
+  colorFont(text, color, size, face, opacity) {
     return text;
   }
 };

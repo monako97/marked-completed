@@ -223,9 +223,9 @@ class Renderer {
     return '<span class="n-katex-inline">' + text + '</span>';
   }
 
-  colorFont(text, color, size, face) {
-    console.log({ text, color, size, face });
-    return `<font${color ? ` color="${color}"` : ''}${size ? ` size="${size}"` : ''}${face ? ` face="${face}"` : ''}>${text}</font>`;
+  colorFont(text, color, size, face, opacity) {
+    const _opacity = opacity && opacity.trim().length ? ` style="opacity:${Number(opacity)};"` : '';
+    return `<font${color ? ` color="${color}"` : ''}${size ? ` size="${size}"` : ''}${face ? ` face="${face}"` : ''}${_opacity}>${text}</font>`;
   }
 
   addToc(anchor, text, level) {
