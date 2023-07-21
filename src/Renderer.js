@@ -223,6 +223,11 @@ class Renderer {
     return '<span class="n-katex-inline">' + text + '</span>';
   }
 
+  colorFont(text, color, size, face) {
+    console.log({ text, color, size, face });
+    return `<font${color ? ` color="${color}"` : ''}${size ? ` size="${size}"` : ''}${face ? ` face="${face}"` : ''}>${text}</font>`;
+  }
+
   addToc(anchor, text, level) {
     this.itoc.push({ anchor, level, text });
     return anchor;

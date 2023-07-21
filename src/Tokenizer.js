@@ -890,6 +890,22 @@ module.exports = class Tokenizer {
     }
   }
 
+  colorFont(src) {
+    const cap = this.rules.inline.colorFont.exec(src);
+    if (cap) {
+      if (cap[0].length > 1) {
+        return {
+          type: 'colorFont',
+          raw: cap[0],
+          color: cap[1],
+          size: cap[2],
+          face: cap[3],
+          text: cap[4]
+        };
+      }
+    }
+  }
+
   toc(src) {
     const cap = this.rules.block.toc.exec(src);
     if (cap) {

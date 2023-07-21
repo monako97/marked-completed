@@ -392,6 +392,12 @@ module.exports = class Lexer {
         tokens.push(token);
         continue;
       }
+      // colorFont
+      if (token = this.tokenizer.colorFont(src)) {
+        src = src.substring(token.raw.length);
+        tokens.push(token);
+        continue;
+      }
       // 颜文字
       if (token = this.tokenizer.textEmoji(src)) {
         src = src.substring(token.raw.length);

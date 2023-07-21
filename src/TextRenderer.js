@@ -71,4 +71,8 @@ module.exports = class TextRenderer {
   katexInline(text) {
     return text;
   }
+
+  colorFont(text, color, size, face) {
+    return text;
+  }
 };

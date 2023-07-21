@@ -239,6 +239,10 @@ module.exports = class Parser {
           out += renderer.katexInline(token.text);
           break;
         }
+        case 'colorFont': {
+          out += renderer.colorFont(token.text, token.color, token.size, token.face);
+          break;
+        }
         case 'escape': {
           out += renderer.text(token.text);
           break;
