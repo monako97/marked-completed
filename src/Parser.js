@@ -214,7 +214,7 @@ module.exports = class Parser {
       }
     }
 
-    out = '<div class="n-md-body">' + out + '</div>';
+    out = '<div class="n-md-body" part="body">' + out + '</div>';
     if (toc) {
       out = this.renderer.toTocHTML() + out;
     }
@@ -235,82 +235,41 @@ module.exports = class Parser {
     for (i = 0; i < l; i++) {
       token = tokens[i];
       switch (token.type) {
-        case 'katexInline': {
-          out += renderer.katexInline(token.text);
-          break;
-        }
-        case 'colorFont': {
+        case 'colorFont':
           out += renderer.colorFont(token.text, token.color, token.size, token.face, token.opacity);
           break;
-        }
-        case 'escape': {
-          out += renderer.text(token.text);
-          break;
-        }
-        case 'html': {
-          out += renderer.html(token.text);
-          break;
-        }
-        case 'link': {
+        case 'link':
           out += renderer.link(token.href, token.title, this.parseInline(token.tokens, renderer));
           break;
-        }
-        case 'image': {
+        case 'image':
           out += renderer.image(token.href, token.title, token.text);
           break;
-        }
-        case 'strong': {
+        case 'strong':
           out += renderer.strong(this.parseInline(token.tokens, renderer));
           break;
-        }
-        case 'em': {
+        case 'em':
           out += renderer.em(this.parseInline(token.tokens, renderer));
           break;
-        }
-        case 'codespan': {
-          out += renderer.codespan(token.text);
-          break;
-        }
-        case 'br': {
+        case 'br':
           out += renderer.br();
           break;
-        }
-        case 'del': {
+        case 'del':
           out += renderer.del(this.parseInline(token.tokens, renderer));
           break;
-        }
-        case 'text': {
-          out += renderer.text(token.text);
+        case 'katexInline':
+        case 'escape':
+        case 'html':
+        case 'codespan':
+        case 'text':
+        case 'textEmoji':
+        case 'codeEmoji':
+        case 'mark':
+        case 'sup':
+        case 'sub':
+        case 's':
+        case 'ins':
+          out += renderer[token.type](token.text);
           break;
-        }
-        case 'textEmoji': {
-          out += renderer.textEmoji(token.text);
-          break;
-        }
-        case 'codeEmoji': {
-          out += renderer.codeEmoji(token.text);
-          break;
-        }
-        case 'mark': {
-          out += renderer.mark(token.text);
-          break;
-        }
-        case 'sup': {
-          out += renderer.sup(token.text);
-          break;
-        }
-        case 'sub': {
-          out += renderer.sub(token.text);
-          break;
-        }
-        case 's': {
-          out += renderer.s(token.text);
-          break;
-        }
-        case 'ins': {
-          out += renderer.ins(token.text);
-          break;
-        }
         default: {
           const errMsg = 'Token with "' + token.type + '" type was not found.';
           if (this.options.silent) {

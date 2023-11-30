@@ -240,7 +240,7 @@ class Renderer {
 
     const addStartUL = () => {
       if (!result.trim().length) {
-        result += '<ol class="n-md-toc" role="menubar">';
+        result += '<ol class="n-md-toc" role="menubar" part="toc">';
       } else {
         result += '<ol>';
       }

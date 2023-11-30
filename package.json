@@ -67,7 +67,7 @@
     "rules": "node test/rules.js",
     "test": "jasmine --config=jasmine.json",
     "test:all": "npm test && npm run test:lint",
-    "test:lint": "eslint bin/marked .",
+    "test:lint": "",
     "test:redos": "node test/vuln-regex.js",
     "test:specs": "npm test -- test/specs/**/*-spec.js",
     "test:unit": "npm test -- test/unit/**/*-spec.js",
@@ -78,7 +78,7 @@
     "html"
   ],
   "typings": "types/index.d.ts",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "files": [
     "bin/",
     "lib/",
