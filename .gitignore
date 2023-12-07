@@ -5,5 +5,4 @@ out
 .vscode
 .git
 .DS_Store
-bin
 lib
