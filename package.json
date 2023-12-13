@@ -78,13 +78,14 @@
     "html"
   ],
   "typings": "types/index.d.ts",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "files": [
     "bin/",
     "lib/",
     "src/",
     "man/",
     "types/",
-    "marked.min.js"
+    "marked.min.js",
+    "emoji.mjs"
   ]
 }
